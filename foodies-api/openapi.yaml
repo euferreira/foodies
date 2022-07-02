@@ -1,0 +1,22 @@
+openapi: 3.0.0
+paths:
+  /api/v1/auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Login
+      description: 'Login user'
+      operationId: login
+      responses:
+        '200':
+          description: 'Login success'
+  /api/v1/auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Register
+      description: 'Register user'
+      operationId: register
+      responses:
+        '200':
+          description: 'Register login success'

@@ -1,0 +1,54 @@
+version: "3.3"
+
+services:
+  mysql:
+    container_name: mysql
+    image: mysql:latest
+    restart: always
+    ports:
+      - "3307:3307"
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_ROOT_PORT: ${DB_PORT}
+
+  redis:
+    container_name: redis
+    image: redis:alpine
+    restart: always
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+
+  nginx:
+    container_name: nginx
+    build: images/nginx
+    command: nginx -g "daemon off;"
+    links:
+      - php
+    ports:
+      - "80:80"
+    depends_on:
+      - mysql
+
+  php:
+    container_name: php
+    build: images/php
+    volumes:
+      - ./lumen:/var/www/html
+    working_dir: /var/www/html/app/public
+    command: php-fpm
+    links:
+      - mysql:mysql
+    ports:
+      - "9000:9000"
+    depends_on:
+      - mysql
+
+volumes:
+  redis-data:
+    driver: "local"
